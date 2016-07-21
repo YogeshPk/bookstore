@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Coauthors</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>User</th>
+      <th>Book</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @coauthors.each do |coauthor| %>
+      <tr>
+        <td><%= coauthor.user %></td>
+        <td><%= coauthor.book %></td>
+        <td><%= link_to 'Show', coauthor %></td>
+        <td><%= link_to 'Edit', edit_coauthor_path(coauthor) %></td>
+        <td><%= link_to 'Destroy', coauthor, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Coauthor', new_coauthor_path %>

@@ -1,0 +1,52 @@
+<h1>Books</h1>
+<% if @books.empty? %>
+       No matching results.
+<%else%>
+    <% count = 1 %>
+    <div class="container">
+    <% @books.each do |book| %>
+        <% if count == 1 %>
+         <div class="row stylish-panel">
+        <% end %>
+        <div class="col-md-4">
+          <div style= "text-align: center">
+            <%= image_tag(book.picture_url,size: "200x200",:class => 'img-thumbnail book-img' ) if book.picture.present? %>
+             <h2><%= book.name %></h2>
+             <p><a id="book-description-<%=book.id %>" data-toggle="tooltip" title="<%= book.description %>"><%= book.description %></a></p>
+             <span id="rating-<%=book.id %>" data-rating="<%=book.avgrating%>"></span><br/>
+             <%= link_to "show", book,:class => 'btn btn-primary',:title => 'See More'%>
+          </div>
+        </div>
+        <% if count == 3 %>
+          <% count = 1 %>
+          </div>
+        <%else%>
+          <% count += 1 %>
+        <% end %>
+    <% end %>
+    </div>
+
+<% end %>
+<div id="infinite-scrolling">
+  <%= will_paginate %>
+</div>
+<br/>
+
+<%= link_to 'New Book', new_book_path %>
+<script>
+    <% @books.each do |book| %>
+      $("#rating-<%=book.id %>").starRating({
+        starSize: 25,
+        readOnly: true
+      });
+      var book_description = "<%== j book.description %>";
+      book_description = book_description.substr(0,73)
+      if(book_description.length > 72){
+              book_description += '...';
+      }
+      $("#book-description-<%=book.id %>").text(book_description);
+    <% end %>
+    $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>

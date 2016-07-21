@@ -1,0 +1,111 @@
+<link href="assets/shop-item.css" rel="stylesheet">
+<div class="container">
+
+        <div class="row">
+            <div class="col-md-12">
+
+                <div class="thumbnail">
+                    <div clas="book-image"><%= image_tag(@book.picture_url) if @book.picture.present? %></div>
+                    <div class="caption-full">
+                        
+                        <h4>
+                          <span class="rest-in-place"  data-object="book" data-attribute="name">
+                            <%= @book.name %>
+                          </span>
+                        </h4>
+                        <p>
+                          <span class="rest-in-place"  data-object="book" data-attribute="description" data-formtype="textarea">
+                            <%= @book.description %>
+                          </span>
+                        </p>
+                        <p>
+                          Author:<%= @book.user.username %>
+                        </p>
+                        <p>
+                          Coauthors:<% @coauthors.each do|coauthor|%>
+                                   <%= coauthor.user.username%>
+                                    <% end %>
+                        </p>
+ <!-- ------------------------------Rating form --------------------------------->
+                        <%= form_for(@rating) do |f| %>
+                          <% if @rating.errors.any? %>
+                            <div id="error_explanation">
+                              <h2><%= pluralize(@rating.errors.count, "error") %> prohibited this rating from being saved:</h2>
+
+                              <ul>
+                              <% @rating.errors.full_messages.each do |message| %>
+                                <li><%= message %></li>
+                              <% end %>
+                              </ul>
+                            </div>
+                          <% end %>
+
+                          <%= hidden_field(:rating, :user_id, :value => @userid)%>
+                          <%= hidden_field(:rating, :book_id, :value => @book.id)%>
+
+                          <div class="field">
+                            <%= f.hidden_field :stars %>
+                          </div>
+                          <div class="update-rating"></div>
+
+                          <div class="actions">
+                            <%= f.submit "Rate", :class => 'btn btn-primary' %>
+                          </div>
+                        <% end %>
+<!------------------------------------------------ Rating form end ------------------------------------------->
+                        <div class="ratings">
+                          <span class="user-rating pull-right"></span>
+                          <span class="pull-right">User Rating</span>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="well">
+
+                    <div class="text-right">
+                        <%= link_to 'Write a review', @book.id.to_s+'/review', :class => "btn btn-success" %>
+                    </div>
+                    <hr>
+                    <% @reviews.each do |review| %>
+                    <div class="row">
+                      <div class="col-md-12">
+
+                          <%= review.user.username %>
+                          <p><%=review.details %></p>
+                      </div>
+                    </div>
+                    <hr/>
+                    <% end %>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+<!------------------------------------------------------------------------------------------------------------>
+<br/>
+<br/>
+<%= link_to 'Edit', edit_book_path(@book) %> |
+<%= link_to 'Destroy', @book, method: :delete, data: { confirm: 'Are you sure?' },:class => 'custom-links' %>|
+<%= link_to 'Back', books_path %>|<%= link_to 'Write a review', @book.id.to_s+'/review' %>
+<script>
+$(".your-rating").starRating({
+    starSize: 25,
+    readOnly: true,
+    initialRating: <%= @user_rating  %> 
+});
+$(".user-rating").starRating({
+    starSize: 25,
+    readOnly: true,
+    initialRating: <%= @avg_rating  %> 
+});
+$(".update-rating").starRating({
+    starSize: 25,
+    useFullStars: true,
+    initialRating: <%= @user_rating  %> ,
+    disableAfterRate: false,
+    callback: function(currentRating, $el){
+      $("#rating_stars").val(currentRating);
+    }
+});
+
+</script>
