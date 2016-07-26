@@ -5,11 +5,20 @@ class BooksController < ApplicationController
   # GET /books
   # GET /books.json
   def index
+    expires_in 5.minutes
     if params[:search]
       @books = Book.search(params[:search],current_user.id)
       @books = @books.paginate(page: params[:page], per_page: 12).order('created_at DESC')
     else
-      book_list = Book.where("user_id = ? OR ispublic = 1",current_user.id)
+
+      book_list = Rails.cache.fetch(:book_list) do
+        book_list = Book.where("user_id = ? OR ispublic = 1",current_user.id)
+      end
+=begin
+slow_object = Rails.cache.fetch(:book_list) do
+create_slow_object
+end
+=end
       #coauthored_book_list = Coauthor.book.where("user_id = ?",current_user.id)
       @books = book_list.paginate(page: params[:page], per_page: 12).order('created_at DESC')
       @books.each do |book|
@@ -56,6 +65,8 @@ class BooksController < ApplicationController
     @users = User.all
     respond_to do |format|
       if @book.save
+        @user = User.find(current_user.id)
+        #ExampleMailer.sample_email(@user).deliver send e-mail regarding successful book creation
         @coauthors = params[:coauthors]
           if @coauthors != nil
           @coauthors.each do|coauthor|
@@ -106,7 +117,7 @@ class BooksController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def book_params
-      params.require(:book).permit(:name, :description, :picture, :user_id, :ispublic,:category,:coauthors,:avg_rating)
+      params.require(:book).permit(:name, :description, :picture, :user_id, :ispublic,:category,:coauthors,:avg_rating, :all_tags)
     end
 
     #check if user accessing book is the author . Allow destroy only to author

@@ -2,8 +2,9 @@ class SearchSuggestionsController < ApplicationController
    def index
       render json: SearchSuggestion.terms_for(params[:term])
    end
-   def save_search(suggestion)
-     suggestion.save(searchsuggestion_params)
+   def self.update_search(suggestion)
+     suggestion.popularity += 1
+     suggestion.update(searchsuggestion_params)
    end
    private
    # Never trust parameters from the scary internet, only allow the white list through.

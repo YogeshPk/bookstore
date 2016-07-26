@@ -1,11 +1,11 @@
-<link href="assets/shop-item.css" rel="stylesheet">
+<!--link href="assets/shop-item.css" rel="stylesheet"/ -->
 <div class="container">
 
         <div class="row">
             <div class="col-md-12">
 
                 <div class="thumbnail">
-                    <div clas="book-image"><%= image_tag(@book.picture_url) if @book.picture.present? %></div>
+                    <%= image_tag(@book.picture_url) if @book.picture.present? %>
                     <div class="caption-full">
                         
                         <h4>
@@ -57,9 +57,14 @@
                           <span class="user-rating pull-right"></span>
                           <span class="pull-right">User Rating</span>
                         </div>
+                        <% @tags =@book.all_tags.split(",") %>
+                        <% @tags.each do |tag| %>
+                          <span class="label label-info tag"><%=tag%></span>
+                        <%end%>
                     </div>
                     
                 </div>
+<!-----------------------------------------------  Reviews ------------------------------------------->
                 <div class="well">
 
                     <div class="text-right">
@@ -77,6 +82,7 @@
                     <hr/>
                     <% end %>
                 </div>
+<!----------------------------------------------------------------------------------------->
             </div>
         </div>
     </div>
@@ -88,24 +94,25 @@
 <%= link_to 'Destroy', @book, method: :delete, data: { confirm: 'Are you sure?' },:class => 'custom-links' %>|
 <%= link_to 'Back', books_path %>|<%= link_to 'Write a review', @book.id.to_s+'/review' %>
 <script>
-$(".your-rating").starRating({
-    starSize: 25,
-    readOnly: true,
-    initialRating: <%= @user_rating  %> 
-});
-$(".user-rating").starRating({
-    starSize: 25,
-    readOnly: true,
-    initialRating: <%= @avg_rating  %> 
-});
-$(".update-rating").starRating({
-    starSize: 25,
-    useFullStars: true,
-    initialRating: <%= @user_rating  %> ,
-    disableAfterRate: false,
-    callback: function(currentRating, $el){
-      $("#rating_stars").val(currentRating);
-    }
-});
-
+$(document).on('turbolinks:load', function() {
+  $(".your-rating").starRating({
+      starSize: 25,
+      readOnly: true,
+      initialRating: <%= @user_rating  %>
+  });
+  $(".user-rating").starRating({
+      starSize: 25,
+      readOnly: true,
+      initialRating: <%= @avg_rating  %>
+  });
+  $(".update-rating").starRating({
+      starSize: 25,
+      useFullStars: true,
+      initialRating: <%= @user_rating  %> ,
+      disableAfterRate: false,
+      callback: function(currentRating, $el){
+        $("#rating_stars").val(currentRating);
+      }
+  });
+} );
 </script>

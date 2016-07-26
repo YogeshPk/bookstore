@@ -18,9 +18,8 @@ class SearchSuggestion < ApplicationRecord
     if suggest.empty?
       @term = SearchSuggestion.new(:term => term,:popularity => 1)
       @term.save
-      puts "$$$$$$$$$$$$$$$$$$$$$$$$$$$ new term #{@term}"
     else
-      suggest.update(:term => term,:popularity => 2)
+      #find solution to update popularity.
     end
 
   end
